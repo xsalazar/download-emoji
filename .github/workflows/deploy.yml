@@ -20,15 +20,15 @@ jobs:
         with:
           node-version: "16"
 
-      - name: Install and Build 🔧
-        run: |
-          npm install
-          npm run build
-
       - name: Download Assets 🖼
         run: |
           node downloader.js
         working-directory: ./helpers
+
+      - name: Install and Build 🔧
+        run: |
+          npm install
+          npm run build
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.4
