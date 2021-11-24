@@ -15,19 +15,22 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup Node
+      - name: Setup Node 🏗
         uses: actions/setup-node@v1
         with:
           node-version: "16"
+
+      - name: Install Packages 🎁
+        run: |
+          npm ci
 
       - name: Download Assets 🖼
         run: |
           node downloader.js
         working-directory: ./helpers
 
-      - name: Install and Build 🔧
+      - name: Build Project 🔧
         run: |
-          npm install
           npm run build
 
       - name: Deploy 🚀
