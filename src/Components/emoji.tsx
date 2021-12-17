@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { Box, ImageListItem, Modal, Grid, Typography } from "@mui/material";
+import { Box, ImageListItem, Modal, Grid } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
 import twemoji from "twemoji";
@@ -28,11 +28,11 @@ const modalStyle = {
   p: 4,
 };
 
-const codeStyle = {
-  fontFamily: "monospace",
-  bgcolor: "grey.300",
-  mr: 1,
-};
+// const codeStyle = {
+//   fontFamily: "monospace",
+//   bgcolor: "grey.300",
+//   mr: 1,
+// };
 
 export default class Emoji extends React.Component<EmojiProps, EmojiState> {
   constructor(props: EmojiProps) {
