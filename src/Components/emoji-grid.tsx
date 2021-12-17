@@ -15,9 +15,11 @@ export default class EmojiGrid extends React.Component<GridProps, GridState> {
     super(props);
 
     this.state = {
-      emojis: emojiDatasource.sort((e1, e2) => {
-        return e1.sort_order > e2.sort_order ? 1 : -1;
-      }),
+      emojis: emojiDatasource
+        .sort((e1, e2) => {
+          return e1.sort_order > e2.sort_order ? 1 : -1;
+        })
+        .slice(0, 100),
     };
   }
 
@@ -48,7 +50,7 @@ export default class EmojiGrid extends React.Component<GridProps, GridState> {
 
     return (
       <Container maxWidth="sm">
-        <ImageList cols={8} gap={16}>
+        <ImageList cols={8} gap={8}>
           {emojiToRender}
         </ImageList>
       </Container>

@@ -22,7 +22,7 @@ const modalStyle = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: 200,
   bgcolor: "background.paper",
   boxShadow: 24,
   p: 4,
@@ -77,7 +77,7 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                   )}
                 ></div>
               </Grid>
-              <Grid item xs>
+              {/* <Grid item xs>
                 {this.state.emoji.short_names.map((shortName: string) => {
                   return (
                     <Typography display="inline" sx={codeStyle}>
@@ -85,7 +85,7 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                     </Typography>
                   );
                 })}
-              </Grid>
+              </Grid> */}
             </Grid>
           </Box>
         </Modal>
