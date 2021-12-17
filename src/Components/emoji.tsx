@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Box, ImageListItem, Modal, Grid, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
+import twemoji from "twemoji";
 
 interface EmojiProps {
   codepoint: string;
@@ -57,14 +58,9 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
           key={uuidv4()}
           style={{ width: "32px", height: "32px" }}
         >
-          <img
-            loading="lazy"
-            alt={this.state.emoji.short_name}
-            src={
-              require(`./../../assets/${this.state.emoji.sort_order}-${this.state.codepoint}.svg`)
-                .default
-            }
-          ></img>
+          <div
+            dangerouslySetInnerHTML={this.createEmoji(this.state.codepoint)}
+          ></div>
         </ImageListItem>
 
         {/* Modal */}
@@ -75,14 +71,11 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                 <CloseIcon onClick={this.closeModal} />
               </Grid>
               <Grid item xs={12}>
-                <img
-                  loading="lazy"
-                  alt={this.state.emoji.short_name}
-                  src={
-                    require(`./../../assets/${this.state.emoji.sort_order}-${this.state.codepoint}.svg`)
-                      .default
-                  }
-                ></img>
+                <div
+                  dangerouslySetInnerHTML={this.createEmoji(
+                    this.state.codepoint
+                  )}
+                ></div>
               </Grid>
               <Grid item xs>
                 {this.state.emoji.short_names.map((shortName: string) => {
@@ -98,6 +91,18 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
         </Modal>
       </div>
     );
+  }
+
+  createEmoji(codePoint: string) {
+    return {
+      __html: twemoji.parse(
+        codePoint.split("-").map(twemoji.convert.fromCodePoint).join(""),
+        {
+          ext: ".svg",
+          folder: "svg",
+        }
+      ),
+    };
   }
 
   openModal() {

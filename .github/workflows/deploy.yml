@@ -4,10 +4,14 @@ on:
   push:
     branches:
       - main
+  workflow_run:
+    workflows: ["Dependabot PR Check"]
+    types:
+      - completed
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code 🛎
@@ -18,19 +22,11 @@ jobs:
       - name: Setup Node 🏗
         uses: actions/setup-node@v1
         with:
-          node-version: "16"
+          node-version: "17"
 
-      - name: Install Packages 🎁
+      - name: Install and Build 🔧
         run: |
-          npm ci
-
-      - name: Download Assets 🖼
-        run: |
-          node downloader.js
-        working-directory: ./helpers
-
-      - name: Build Project 🔧
-        run: |
+          npm install
           npm run build
 
       - name: Deploy 🚀

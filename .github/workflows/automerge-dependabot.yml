@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  AutoMerge:
+  auto-merge:
     runs-on: ubuntu-latest
 
     # Checking the actor will prevent your Action run failing on non-Dependabot PRs
