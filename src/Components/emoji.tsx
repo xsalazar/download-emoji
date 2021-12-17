@@ -22,10 +22,10 @@ const modalStyle = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 200,
+  width: 300,
   bgcolor: "background.paper",
   boxShadow: 24,
-  p: 4,
+  p: 2,
 };
 
 // const codeStyle = {
