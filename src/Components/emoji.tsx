@@ -1,8 +1,24 @@
 import { v4 as uuidv4 } from "uuid";
-import { Box, ImageListItem, Modal, Grid } from "@mui/material";
+import {
+  Box,
+  ImageListItem,
+  Modal,
+  Grid,
+  Typography,
+  IconButton,
+  Collapse,
+  TextField,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
 import twemoji from "twemoji";
+import {
+  ExpandLess,
+  ExpandMore,
+  Download,
+  Link,
+  LinkOff,
+} from "@mui/icons-material";
 
 interface EmojiProps {
   codepoint: string;
@@ -14,7 +30,11 @@ interface EmojiState {
   codepoint: string;
   emoji: EmojiDatasource;
   variation?: EmojiVariation;
-  isModalOpen: boolean;
+  modalState: {
+    isOpen: boolean;
+    isMetadataOpen: boolean;
+    ratioLocked: boolean;
+  };
 }
 
 const modalStyle = {
@@ -28,11 +48,11 @@ const modalStyle = {
   p: 2,
 };
 
-// const codeStyle = {
-//   fontFamily: "monospace",
-//   bgcolor: "grey.300",
-//   mr: 1,
-// };
+const codeStyle = {
+  fontFamily: "monospace",
+  bgcolor: "grey.300",
+  mr: 1,
+};
 
 export default class Emoji extends React.Component<EmojiProps, EmojiState> {
   constructor(props: EmojiProps) {
@@ -42,11 +62,17 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
       codepoint: props.codepoint,
       emoji: props.emoji,
       variation: props.variation ?? undefined,
-      isModalOpen: false,
+      modalState: {
+        isOpen: false,
+        isMetadataOpen: false,
+        ratioLocked: true,
+      },
     };
 
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.handleMetadataClick = this.handleMetadataClick.bind(this);
+    this.handleRatioLockedClick = this.handleRatioLockedClick.bind(this);
   }
 
   render() {
@@ -71,28 +97,101 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
         </ImageListItem>
 
         {/* Modal */}
-        <Modal open={this.state.isModalOpen} onClose={this.closeModal}>
+        <Modal open={this.state.modalState.isOpen} onClose={this.closeModal}>
           <Box sx={modalStyle}>
-            <Grid container columns={1}>
+            <Grid container>
+              {/* Close Icon */}
               <Grid item container xs={12} justifyContent="flex-end">
-                <CloseIcon onClick={this.closeModal} />
+                <IconButton onClick={this.closeModal}>
+                  <CloseIcon />
+                </IconButton>
               </Grid>
-              <Grid item xs={12}>
+
+              {/* Image */}
+              <Grid item xs={12} sx={{ p: 1 }}>
                 <div
                   dangerouslySetInnerHTML={this.createEmoji(
                     this.state.codepoint
                   )}
                 ></div>
               </Grid>
-              {/* <Grid item xs>
-                {this.state.emoji.short_names.map((shortName: string) => {
-                  return (
-                    <Typography display="inline" sx={codeStyle}>
-                      :{shortName}:
+
+              {/* Download Options */}
+              <Grid item container sx={{ p: 1 }}>
+                {/* Size */}
+                <Grid item container xs={10}>
+                  {/* Width Input */}
+                  <Grid item xs={5}>
+                    <TextField label="width" size="small"></TextField>
+                  </Grid>
+
+                  {/* Lock Ratio */}
+                  <Grid item xs={2}>
+                    <IconButton onClick={this.handleRatioLockedClick}>
+                      {this.state.modalState.ratioLocked ? (
+                        <Link />
+                      ) : (
+                        <LinkOff />
+                      )}
+                    </IconButton>
+                  </Grid>
+
+                  {/* Height Input */}
+                  <Grid item xs={5}>
+                    <TextField label="height" size="small"></TextField>
+                  </Grid>
+                </Grid>
+
+                {/* Download Button */}
+                <Grid item container xs={2} justifyContent="flex-end">
+                  <IconButton>
+                    <Download />
+                  </IconButton>
+                </Grid>
+              </Grid>
+
+              {/* Metadata Header*/}
+              <Grid item container>
+                <Grid item xs={2}>
+                  <IconButton onClick={this.handleMetadataClick}>
+                    {this.state.modalState.isMetadataOpen ? (
+                      <ExpandLess />
+                    ) : (
+                      <ExpandMore />
+                    )}
+                  </IconButton>
+                </Grid>
+                <Grid item xs="auto" alignSelf="center">
+                  <Typography>Metadata</Typography>
+                </Grid>
+              </Grid>
+
+              {/* Metadata */}
+              <Grid item container>
+                <Collapse in={this.state.modalState.isMetadataOpen}>
+                  {/* Emoji Name */}
+                  <Grid item xs={12} sx={{ p: 1 }}>
+                    <Typography>
+                      {this.getFormattedName(this.state.emoji.name)}
                     </Typography>
-                  );
-                })}
-              </Grid> */}
+                  </Grid>
+
+                  {/* Short Names */}
+                  <Grid item xs>
+                    {this.state.emoji.short_names.map((shortName: string) => {
+                      return (
+                        <Typography
+                          display="inline"
+                          sx={codeStyle}
+                          key={shortName}
+                        >
+                          :{shortName}:
+                        </Typography>
+                      );
+                    })}
+                  </Grid>
+                </Collapse>
+              </Grid>
             </Grid>
           </Box>
         </Modal>
@@ -113,11 +212,11 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
   }
 
   openModal() {
-    this.setState({ isModalOpen: true });
+    this.setState({ modalState: { ...this.state.modalState, isOpen: true } });
   }
 
   closeModal() {
-    this.setState({ isModalOpen: false });
+    this.setState({ modalState: { ...this.state.modalState, isOpen: false } });
   }
 
   getRandomBackgroundColor(): string {
@@ -133,6 +232,32 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
       "#FF8181",
     ];
     return partyColors[Math.floor(Math.random() * partyColors.length)];
+  }
+
+  getFormattedName(name: string): string {
+    return name
+      .toLowerCase()
+      .split(" ")
+      .map((w: string) => w[0].toUpperCase() + w.slice(1))
+      .join(" ");
+  }
+
+  handleMetadataClick() {
+    this.setState({
+      modalState: {
+        ...this.state.modalState,
+        isMetadataOpen: !this.state.modalState.isMetadataOpen,
+      },
+    });
+  }
+
+  handleRatioLockedClick() {
+    this.setState({
+      modalState: {
+        ...this.state.modalState,
+        ratioLocked: !this.state.modalState.ratioLocked,
+      },
+    });
   }
 }
 
