@@ -76,13 +76,15 @@ export default class EmojiGrid extends React.Component<GridProps, GridState> {
               value={this.state.selectedTab}
               onChange={this.handleSelectedTabChanged}
               variant="scrollable"
+              scrollButtons
+              allowScrollButtonsMobile
             >
               {this.state.emojiCategories.map((category: string) => {
-                return <Tab label={category}></Tab>;
+                return <Tab label={category} key={category}></Tab>;
               })}
             </Tabs>
           </Box>
-          <ImageList cols={8} gap={8}>
+          <ImageList cols={8} gap={4}>
             {emojiToRender}
           </ImageList>
         </Container>

@@ -56,7 +56,14 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
         <ImageListItem
           onClick={this.openModal}
           key={uuidv4()}
-          style={{ width: "32px", height: "32px" }}
+          sx={{
+            maxWidth: 32,
+            borderRadius: 2,
+            padding: 0.5,
+            "&:hover": {
+              backgroundColor: () => this.getRandomBackgroundColor(),
+            },
+          }}
         >
           <div
             dangerouslySetInnerHTML={this.createEmoji(this.state.codepoint)}
@@ -111,6 +118,21 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
 
   closeModal() {
     this.setState({ isModalOpen: false });
+  }
+
+  getRandomBackgroundColor(): string {
+    var partyColors = [
+      "#FF6B6B",
+      "#FF6BB5",
+      "#FF81FF",
+      "#D081FF",
+      "#81ACFF",
+      "#81FFFF",
+      "#81FF81",
+      "#FFD081",
+      "#FF8181",
+    ];
+    return partyColors[Math.floor(Math.random() * partyColors.length)];
   }
 }
 
