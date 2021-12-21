@@ -8,8 +8,6 @@ import {
   IconButton,
   Collapse,
   TextField,
-  Select,
-  MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
@@ -52,11 +50,11 @@ const modalStyle = {
   p: 2,
 };
 
-const codeStyle = {
-  fontFamily: "monospace",
-  bgcolor: "grey.300",
-  mr: 1,
-};
+// const codeStyle = {
+//   fontFamily: "monospace",
+//   bgcolor: "grey.300",
+//   mr: 1,
+// };
 
 export default class Emoji extends React.Component<EmojiProps, EmojiState> {
   constructor(props: EmojiProps) {
