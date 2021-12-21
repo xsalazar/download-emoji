@@ -19,9 +19,11 @@ export default class EmojiGrid extends React.Component<GridProps, GridState> {
 
     var selectedTab = 0;
 
-    var sortedEmojis = emojiDatasource.sort((e1, e2) => {
-      return e1.sort_order > e2.sort_order ? 1 : -1;
-    });
+    var sortedEmojis = emojiDatasource
+      .sort((e1, e2) => {
+        return e1.sort_order > e2.sort_order ? 1 : -1;
+      })
+      .filter((e: EmojiDatasource) => e.sort_order !== 152); // Filter out eye in speech bubble. See: https://git.io/JDj18
 
     var emojiCategories = sortedEmojis
       .map((e: EmojiDatasource) => e.category)

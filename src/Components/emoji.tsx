@@ -8,6 +8,8 @@ import {
   IconButton,
   Collapse,
   TextField,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
@@ -34,6 +36,8 @@ interface EmojiState {
     isOpen: boolean;
     isMetadataOpen: boolean;
     ratioLocked: boolean;
+    width: number;
+    height: number;
   };
 }
 
@@ -66,6 +70,8 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
         isOpen: false,
         isMetadataOpen: false,
         ratioLocked: true,
+        width: 36,
+        height: 36,
       },
     };
 
@@ -73,6 +79,8 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
     this.closeModal = this.closeModal.bind(this);
     this.handleMetadataClick = this.handleMetadataClick.bind(this);
     this.handleRatioLockedClick = this.handleRatioLockedClick.bind(this);
+    this.handleWidthChanged = this.handleWidthChanged.bind(this);
+    this.handleHeightChanged = this.handleHeightChanged.bind(this);
   }
 
   render() {
@@ -117,41 +125,54 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
               </Grid>
 
               {/* Download Options */}
-              <Grid item container sx={{ p: 1 }}>
-                {/* Size */}
-                <Grid item container xs={10}>
-                  {/* Width Input */}
-                  <Grid item xs={5}>
-                    <TextField label="width" size="small"></TextField>
-                  </Grid>
+              <Grid item container xs={12} sx={{ p: 1 }}>
+                {/* Width Input */}
+                <Grid item xs={4}>
+                  <TextField
+                    label="width"
+                    size="small"
+                    value={this.state.modalState.width}
+                    onChange={this.handleWidthChanged}
+                    inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                    error={this.state.modalState.width === 0}
+                  />
+                </Grid>
 
-                  {/* Lock Ratio */}
-                  <Grid item xs={2}>
-                    <IconButton onClick={this.handleRatioLockedClick}>
-                      {this.state.modalState.ratioLocked ? (
-                        <Link />
-                      ) : (
-                        <LinkOff />
-                      )}
-                    </IconButton>
-                  </Grid>
+                {/* Lock Ratio */}
+                <Grid item container xs={2} justifyContent="center">
+                  <IconButton onClick={this.handleRatioLockedClick}>
+                    {this.state.modalState.ratioLocked ? <Link /> : <LinkOff />}
+                  </IconButton>
+                </Grid>
 
-                  {/* Height Input */}
-                  <Grid item xs={5}>
-                    <TextField label="height" size="small"></TextField>
-                  </Grid>
+                {/* Height Input */}
+                <Grid item xs={4}>
+                  <TextField
+                    label="height"
+                    size="small"
+                    value={this.state.modalState.height}
+                    disabled={this.state.modalState.ratioLocked}
+                    onChange={this.handleHeightChanged}
+                    inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                    error={this.state.modalState.height === 0}
+                  />
                 </Grid>
 
                 {/* Download Button */}
                 <Grid item container xs={2} justifyContent="flex-end">
-                  <IconButton>
+                  <IconButton
+                    disabled={
+                      this.state.modalState.height === 0 ||
+                      this.state.modalState.width === 0
+                    }
+                  >
                     <Download />
                   </IconButton>
                 </Grid>
               </Grid>
 
               {/* Metadata Header*/}
-              <Grid item container>
+              <Grid item container xs={12} sx={{ p: 1 }}>
                 <Grid item xs={2}>
                   <IconButton onClick={this.handleMetadataClick}>
                     {this.state.modalState.isMetadataOpen ? (
@@ -161,13 +182,19 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                     )}
                   </IconButton>
                 </Grid>
-                <Grid item xs="auto" alignSelf="center">
+                <Grid
+                  item
+                  container
+                  xs="auto"
+                  justifyContent="left"
+                  alignSelf="center"
+                >
                   <Typography>Metadata</Typography>
                 </Grid>
               </Grid>
 
               {/* Metadata */}
-              <Grid item container>
+              <Grid item container xs={12}>
                 <Collapse in={this.state.modalState.isMetadataOpen}>
                   {/* Emoji Name */}
                   <Grid item xs={12} sx={{ p: 1 }}>
@@ -177,7 +204,7 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                   </Grid>
 
                   {/* Short Names */}
-                  <Grid item xs>
+                  {/* <Grid item xs={12}>
                     {this.state.emoji.short_names.map((shortName: string) => {
                       return (
                         <Typography
@@ -189,7 +216,7 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                         </Typography>
                       );
                     })}
-                  </Grid>
+                  </Grid> */}
                 </Collapse>
               </Grid>
             </Grid>
@@ -252,10 +279,49 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
   }
 
   handleRatioLockedClick() {
+    // If ratio lock is currently unlocked, we're going _to_ locked, so sync ratio up
+    var shouldSyncHeight = !this.state.modalState.ratioLocked;
+
     this.setState({
       modalState: {
         ...this.state.modalState,
         ratioLocked: !this.state.modalState.ratioLocked,
+        height: shouldSyncHeight
+          ? this.state.modalState.width
+          : this.state.modalState.height,
+      },
+    });
+  }
+
+  handleWidthChanged(event: React.ChangeEvent<HTMLInputElement>): void {
+    var newWidth = parseInt(event.target.value);
+
+    if (isNaN(newWidth)) {
+      newWidth = 0;
+    }
+
+    this.setState({
+      modalState: {
+        ...this.state.modalState,
+        width: newWidth,
+        height: this.state.modalState.ratioLocked
+          ? newWidth
+          : this.state.modalState.height,
+      },
+    });
+  }
+
+  handleHeightChanged(event: React.ChangeEvent<HTMLInputElement>) {
+    var newHeight = parseInt(event.target.value);
+
+    if (isNaN(newHeight)) {
+      newHeight = 0;
+    }
+
+    this.setState({
+      modalState: {
+        ...this.state.modalState,
+        height: newHeight,
       },
     });
   }
