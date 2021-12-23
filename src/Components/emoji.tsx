@@ -19,6 +19,7 @@ import {
   Link,
   LinkOff,
 } from "@mui/icons-material";
+import axios from "axios";
 
 interface EmojiProps {
   codepoint: string;
@@ -79,6 +80,7 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
     this.handleRatioLockedClick = this.handleRatioLockedClick.bind(this);
     this.handleWidthChanged = this.handleWidthChanged.bind(this);
     this.handleHeightChanged = this.handleHeightChanged.bind(this);
+    this.handleDownloadClick = this.handleDownloadClick.bind(this);
   }
 
   render() {
@@ -159,6 +161,7 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                 {/* Download Button */}
                 <Grid item container xs={2} justifyContent="flex-end">
                   <IconButton
+                    onClick={this.handleDownloadClick}
                     disabled={
                       this.state.modalState.height === 0 ||
                       this.state.modalState.width === 0
@@ -322,6 +325,42 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
         height: newHeight,
       },
     });
+  }
+
+  async handleDownloadClick() {
+    var parser = new DOMParser();
+    var emojiHtml = twemoji.parse(
+      this.state.codepoint
+        .split("-")
+        .map(twemoji.convert.fromCodePoint)
+        .join(""),
+      {
+        ext: ".svg",
+        folder: "svg",
+      }
+    );
+
+    var parsedHtml = parser.parseFromString(emojiHtml, "text/html");
+    var src = parsedHtml.getElementsByTagName("img")[0].src;
+
+    var response = await axios.post(
+      "https://7uara1y3v7.execute-api.us-west-2.amazonaws.com/",
+      {
+        imageSource: src,
+        width: this.state.modalState.width,
+        height: this.state.modalState.height,
+      },
+      {
+        responseType: "blob",
+      }
+    );
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `${this.state.emoji.short_name}.png`); //or any other extension
+    document.body.appendChild(link);
+    link.click();
   }
 }
 
