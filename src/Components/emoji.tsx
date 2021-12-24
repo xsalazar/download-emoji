@@ -8,6 +8,7 @@ import {
   IconButton,
   Collapse,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
@@ -34,6 +35,7 @@ interface EmojiState {
   modalState: {
     isOpen: boolean;
     isMetadataOpen: boolean;
+    isLoading: boolean;
     ratioLocked: boolean;
     width: number;
     height: number;
@@ -68,6 +70,7 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
       modalState: {
         isOpen: false,
         isMetadataOpen: false,
+        isLoading: false,
         ratioLocked: true,
         width: 36,
         height: 36,
@@ -164,10 +167,15 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                     onClick={this.handleDownloadClick}
                     disabled={
                       this.state.modalState.height === 0 ||
-                      this.state.modalState.width === 0
+                      this.state.modalState.width === 0 ||
+                      this.state.modalState.isLoading
                     }
                   >
-                    <Download />
+                    {this.state.modalState.isLoading ? (
+                      <CircularProgress size={25} />
+                    ) : (
+                      <Download />
+                    )}
                   </IconButton>
                 </Grid>
               </Grid>
@@ -343,17 +351,19 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
     var parsedHtml = parser.parseFromString(emojiHtml, "text/html");
     var src = parsedHtml.getElementsByTagName("img")[0].src;
 
-    var response = await axios.post(
-      "https://7uara1y3v7.execute-api.us-west-2.amazonaws.com/",
-      {
-        imageSource: src,
-        width: this.state.modalState.width,
-        height: this.state.modalState.height,
-      },
-      {
-        responseType: "blob",
-      }
-    );
+    var requestUrl = `https://7uara1y3v7.execute-api.us-west-2.amazonaws.com?imageSource=${src}&imageFormat=png&width=${this.state.modalState.width}&height=${this.state.modalState.height}`;
+
+    this.setState({
+      modalState: { ...this.state.modalState, isLoading: true },
+    });
+
+    var response = await axios.get(requestUrl, {
+      responseType: "blob",
+    });
+
+    this.setState({
+      modalState: { ...this.state.modalState, isLoading: false },
+    });
 
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
