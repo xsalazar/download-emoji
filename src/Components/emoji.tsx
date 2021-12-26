@@ -6,35 +6,30 @@ import {
   Grid,
   Typography,
   IconButton,
-  Collapse,
   TextField,
   CircularProgress,
+  InputAdornment,
+  ImageList,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
 import twemoji from "twemoji";
-import {
-  ExpandLess,
-  ExpandMore,
-  Download,
-  Link,
-  LinkOff,
-} from "@mui/icons-material";
+import { Download, Link, LinkOff } from "@mui/icons-material";
 import axios from "axios";
 
 interface EmojiProps {
   codepoint: string;
   emoji: EmojiDatasource;
-  variation?: EmojiVariation;
+  variations?: Array<EmojiVariation>;
 }
 
 interface EmojiState {
   codepoint: string;
   emoji: EmojiDatasource;
-  variation?: EmojiVariation;
+  variations?: Array<EmojiVariation>;
   modalState: {
+    selectedCodepoint: string;
     isOpen: boolean;
-    isMetadataOpen: boolean;
     isLoading: boolean;
     ratioLocked: boolean;
     width: number;
@@ -53,37 +48,48 @@ const modalStyle = {
   p: 2,
 };
 
-// const codeStyle = {
-//   fontFamily: "monospace",
-//   bgcolor: "grey.300",
-//   mr: 1,
-// };
-
 export default class Emoji extends React.Component<EmojiProps, EmojiState> {
   constructor(props: EmojiProps) {
     super(props);
 
+    var variations = new Array<EmojiVariation>();
+    if (props.variations) {
+      var defaultVariation: EmojiVariation = {
+        unified: props.emoji.unified,
+        image: props.emoji.image,
+        sheet_x: props.emoji.sheet_x,
+        sheet_y: props.emoji.sheet_y,
+        added_in: props.emoji.added_in,
+        has_img_apple: props.emoji.has_img_apple,
+        has_img_google: props.emoji.has_img_google,
+        has_img_twitter: props.emoji.has_img_twitter,
+        has_img_facebook: props.emoji.has_img_facebook,
+      };
+
+      variations = [defaultVariation, ...props.variations];
+    }
+
     this.state = {
       codepoint: props.codepoint,
       emoji: props.emoji,
-      variation: props.variation ?? undefined,
+      variations: variations,
       modalState: {
+        selectedCodepoint: props.codepoint,
         isOpen: false,
-        isMetadataOpen: false,
         isLoading: false,
         ratioLocked: true,
-        width: 36,
-        height: 36,
+        width: 64,
+        height: 64,
       },
     };
 
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
-    this.handleMetadataClick = this.handleMetadataClick.bind(this);
     this.handleRatioLockedClick = this.handleRatioLockedClick.bind(this);
     this.handleWidthChanged = this.handleWidthChanged.bind(this);
     this.handleHeightChanged = this.handleHeightChanged.bind(this);
     this.handleDownloadClick = this.handleDownloadClick.bind(this);
+    this.handleVariationClick = this.handleVariationClick.bind(this);
   }
 
   render() {
@@ -112,17 +118,30 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
           <Box sx={modalStyle}>
             <Grid container>
               {/* Close Icon */}
-              <Grid item container xs={12} justifyContent="flex-end">
-                <IconButton onClick={this.closeModal}>
-                  <CloseIcon />
-                </IconButton>
+              <Grid item container xs={12} sx={{ pb: 1 }}>
+                <Grid item xs={10} sx={{ pl: 1 }} alignSelf="center">
+                  <Typography>
+                    {this.getFormattedName(this.state.emoji.name)}
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  container
+                  xs={2}
+                  justifyContent="flex-end"
+                  alignSelf="center"
+                >
+                  <IconButton onClick={this.closeModal}>
+                    <CloseIcon />
+                  </IconButton>
+                </Grid>
               </Grid>
 
               {/* Image */}
-              <Grid item xs={12} sx={{ p: 1 }}>
+              <Grid item xs={12} sx={{ p: 1, pb: 2 }}>
                 <div
                   dangerouslySetInnerHTML={this.createEmoji(
-                    this.state.codepoint
+                    this.state.modalState.selectedCodepoint
                   )}
                 ></div>
               </Grid>
@@ -138,6 +157,11 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                     onChange={this.handleWidthChanged}
                     inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
                     error={this.state.modalState.width === 0}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">px</InputAdornment>
+                      ),
+                    }}
                   />
                 </Grid>
 
@@ -158,6 +182,11 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                     onChange={this.handleHeightChanged}
                     inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
                     error={this.state.modalState.height === 0}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">px</InputAdornment>
+                      ),
+                    }}
                   />
                 </Grid>
 
@@ -180,54 +209,45 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                 </Grid>
               </Grid>
 
-              {/* Metadata Header*/}
-              <Grid item container xs={12} sx={{ p: 1 }}>
-                <Grid item xs={2}>
-                  <IconButton onClick={this.handleMetadataClick}>
-                    {this.state.modalState.isMetadataOpen ? (
-                      <ExpandLess />
-                    ) : (
-                      <ExpandMore />
-                    )}
-                  </IconButton>
-                </Grid>
-                <Grid
-                  item
-                  container
-                  xs="auto"
-                  justifyContent="left"
-                  alignSelf="center"
-                >
-                  <Typography>Metadata</Typography>
-                </Grid>
-              </Grid>
-
-              {/* Metadata */}
-              <Grid item container xs={12}>
-                <Collapse in={this.state.modalState.isMetadataOpen}>
-                  {/* Emoji Name */}
-                  <Grid item xs={12} sx={{ p: 1 }}>
-                    <Typography>
-                      {this.getFormattedName(this.state.emoji.name)}
-                    </Typography>
-                  </Grid>
-
-                  {/* Short Names */}
-                  {/* <Grid item xs={12}>
-                    {this.state.emoji.short_names.map((shortName: string) => {
+              {/* Variations */}
+              {this.state.variations && this.state.variations.length > 1 ? (
+                <Grid item xs={12}>
+                  <ImageList cols={6}>
+                    {this.state.variations.map((variation: EmojiVariation) => {
                       return (
-                        <Typography
-                          display="inline"
-                          sx={codeStyle}
-                          key={shortName}
+                        <ImageListItem
+                          onClick={(event) =>
+                            this.handleVariationClick(variation.unified, event)
+                          }
+                          key={uuidv4()}
+                          sx={{
+                            textAlign: "center",
+                            borderRadius: 2,
+                            padding: 0.5,
+                            backgroundColor: (theme) =>
+                              variation.unified ===
+                              this.state.modalState.selectedCodepoint
+                                ? theme.palette.action.selected
+                                : "",
+                            "&:hover": {
+                              backgroundColor: (theme) =>
+                                theme.palette.action.hover,
+                            },
+                          }}
                         >
-                          :{shortName}:
-                        </Typography>
+                          <div
+                            dangerouslySetInnerHTML={this.createEmoji(
+                              variation.unified
+                            )}
+                          ></div>
+                        </ImageListItem>
                       );
                     })}
-                  </Grid> */}
-                </Collapse>
-              </Grid>
+                  </ImageList>
+                </Grid>
+              ) : (
+                <div></div>
+              )}
             </Grid>
           </Box>
         </Modal>
@@ -252,7 +272,16 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
   }
 
   closeModal() {
-    this.setState({ modalState: { ...this.state.modalState, isOpen: false } });
+    this.setState({
+      modalState: {
+        ...this.state.modalState,
+        selectedCodepoint: this.state.codepoint,
+        isOpen: false,
+        ratioLocked: true,
+        width: 64,
+        height: 64,
+      },
+    });
   }
 
   getRandomBackgroundColor(): string {
@@ -276,15 +305,6 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
       .split(" ")
       .map((w: string) => w[0].toUpperCase() + w.slice(1))
       .join(" ");
-  }
-
-  handleMetadataClick() {
-    this.setState({
-      modalState: {
-        ...this.state.modalState,
-        isMetadataOpen: !this.state.modalState.isMetadataOpen,
-      },
-    });
   }
 
   handleRatioLockedClick() {
@@ -338,7 +358,7 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
   async handleDownloadClick() {
     var parser = new DOMParser();
     var emojiHtml = twemoji.parse(
-      this.state.codepoint
+      this.state.modalState.selectedCodepoint
         .split("-")
         .map(twemoji.convert.fromCodePoint)
         .join(""),
@@ -371,6 +391,18 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
     link.setAttribute("download", `${this.state.emoji.short_name}.png`); //or any other extension
     document.body.appendChild(link);
     link.click();
+  }
+
+  handleVariationClick(
+    variationCodepoint: string,
+    event: React.SyntheticEvent
+  ) {
+    this.setState({
+      modalState: {
+        ...this.state.modalState,
+        selectedCodepoint: variationCodepoint,
+      },
+    });
   }
 }
 

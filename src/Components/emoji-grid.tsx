@@ -1,5 +1,5 @@
 import React from "react";
-import Emoji, { EmojiDatasource } from "./emoji";
+import Emoji, { EmojiDatasource, EmojiVariation } from "./emoji";
 import emojiDatasource from "emoji-datasource/emoji_pretty.json";
 import { Container, ImageList, Tab, Tabs, Box } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
@@ -48,26 +48,24 @@ export default class EmojiGrid extends React.Component<GridProps, GridState> {
   render() {
     const emojiToRender = new Array<JSX.Element>();
     this.state.emojis.forEach((e: EmojiDatasource) => {
+      var emojiVariations = new Array<EmojiVariation>();
+      if (e.skin_variations) {
+        Object.values(e.skin_variations).forEach(
+          (variation: EmojiVariation | undefined) => {
+            if (variation) {
+              emojiVariations.push(variation);
+            }
+          }
+        );
+      }
       emojiToRender.push(
-        <Emoji key={uuidv4()} codepoint={e.unified} emoji={e} />
+        <Emoji
+          key={uuidv4()}
+          codepoint={e.unified}
+          emoji={e}
+          variations={emojiVariations}
+        />
       );
-
-      // if (e.skin_variations) {
-      //   Object.values(e.skin_variations).forEach(
-      //     (variation: EmojiVariation | undefined) => {
-      //       if (variation) {
-      //         emojiToRender.push(
-      //           <Emoji
-      //             key={uuidv4()}
-      //             codepoint={variation.unified}
-      //             emoji={e}
-      //             variation={variation}
-      //           />
-      //         );
-      //       }
-      //     }
-      //   );
-      // }
     });
 
     return (
