@@ -10,11 +10,16 @@ import {
   CircularProgress,
   InputAdornment,
   ImageList,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
 import twemoji from "twemoji";
-import { Download, Link, LinkOff } from "@mui/icons-material";
+import { Download } from "@mui/icons-material";
 import axios from "axios";
 
 interface EmojiProps {
@@ -31,11 +36,17 @@ interface EmojiState {
     selectedCodepoint: string;
     isOpen: boolean;
     isLoading: boolean;
-    ratioLocked: boolean;
-    width: number;
-    height: number;
+    size: number;
+    imageFormat: ImageFormat;
   };
 }
+
+enum ImageFormat {
+  png = "png",
+  jpeg = "jpeg",
+}
+
+const maxImageSize = 16384;
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -77,17 +88,15 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
         selectedCodepoint: props.codepoint,
         isOpen: false,
         isLoading: false,
-        ratioLocked: true,
-        width: 64,
-        height: 64,
+        size: 64,
+        imageFormat: ImageFormat.png,
       },
     };
 
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
-    this.handleRatioLockedClick = this.handleRatioLockedClick.bind(this);
-    this.handleWidthChanged = this.handleWidthChanged.bind(this);
-    this.handleHeightChanged = this.handleHeightChanged.bind(this);
+    this.handleSizeChanged = this.handleSizeChanged.bind(this);
+    this.handleFormatChanged = this.handleFormatChanged.bind(this);
     this.handleDownloadClick = this.handleDownloadClick.bind(this);
     this.handleVariationClick = this.handleVariationClick.bind(this);
   }
@@ -146,69 +155,6 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                 ></div>
               </Grid>
 
-              {/* Download Options */}
-              <Grid item container xs={12} sx={{ p: 1 }}>
-                {/* Width Input */}
-                <Grid item xs={4}>
-                  <TextField
-                    label="width"
-                    size="small"
-                    value={this.state.modalState.width}
-                    onChange={this.handleWidthChanged}
-                    inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-                    error={this.state.modalState.width === 0}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">px</InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-
-                {/* Lock Ratio */}
-                <Grid item container xs={2} justifyContent="center">
-                  <IconButton onClick={this.handleRatioLockedClick}>
-                    {this.state.modalState.ratioLocked ? <Link /> : <LinkOff />}
-                  </IconButton>
-                </Grid>
-
-                {/* Height Input */}
-                <Grid item xs={4}>
-                  <TextField
-                    label="height"
-                    size="small"
-                    value={this.state.modalState.height}
-                    disabled={this.state.modalState.ratioLocked}
-                    onChange={this.handleHeightChanged}
-                    inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-                    error={this.state.modalState.height === 0}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">px</InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-
-                {/* Download Button */}
-                <Grid item container xs={2} justifyContent="flex-end">
-                  <IconButton
-                    onClick={this.handleDownloadClick}
-                    disabled={
-                      this.state.modalState.height === 0 ||
-                      this.state.modalState.width === 0 ||
-                      this.state.modalState.isLoading
-                    }
-                  >
-                    {this.state.modalState.isLoading ? (
-                      <CircularProgress size={24} />
-                    ) : (
-                      <Download />
-                    )}
-                  </IconButton>
-                </Grid>
-              </Grid>
-
               {/* Variations */}
               {this.state.variations && this.state.variations.length > 1 ? (
                 <Grid item xs={12}>
@@ -248,6 +194,63 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
               ) : (
                 <div></div>
               )}
+
+              {/* Download Options */}
+              <Grid item container xs={12} sx={{ p: 1 }}>
+                {/* Size Input */}
+                <Grid item xs={5} sx={{ pr: 1 }}>
+                  <TextField
+                    label="size"
+                    size="small"
+                    value={this.state.modalState.size}
+                    onChange={this.handleSizeChanged}
+                    inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                    error={
+                      this.state.modalState.size === 0 ||
+                      this.state.modalState.size > maxImageSize
+                    }
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">px</InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+
+                {/* Image Format */}
+                <Grid item xs={5} sx={{ pr: 1 }}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel>format</InputLabel>
+                    <Select
+                      label="format"
+                      value={this.state.modalState.imageFormat}
+                      onChange={this.handleFormatChanged}
+                    >
+                      <MenuItem value={ImageFormat.png}>.png</MenuItem>
+                      <MenuItem value={ImageFormat.jpeg}>.jpeg</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                {/* Download Button */}
+                <Grid item container xs={2} justifyContent="flex-end">
+                  <IconButton
+                    color="primary"
+                    onClick={this.handleDownloadClick}
+                    disabled={
+                      this.state.modalState.size === 0 ||
+                      this.state.modalState.size > maxImageSize ||
+                      this.state.modalState.isLoading
+                    }
+                  >
+                    {this.state.modalState.isLoading ? (
+                      <CircularProgress size={24} />
+                    ) : (
+                      <Download />
+                    )}
+                  </IconButton>
+                </Grid>
+              </Grid>
             </Grid>
           </Box>
         </Modal>
@@ -271,15 +274,15 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
     this.setState({ modalState: { ...this.state.modalState, isOpen: true } });
   }
 
+  // Reset modal state when closing
   closeModal() {
     this.setState({
       modalState: {
         ...this.state.modalState,
         selectedCodepoint: this.state.codepoint,
         isOpen: false,
-        ratioLocked: true,
-        width: 64,
-        height: 64,
+        size: 64,
+        imageFormat: ImageFormat.png,
       },
     });
   }
@@ -307,50 +310,29 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
       .join(" ");
   }
 
-  handleRatioLockedClick() {
-    // If ratio lock is currently unlocked, we're going _to_ locked, so sync ratio up
-    var shouldSyncHeight = !this.state.modalState.ratioLocked;
+  handleSizeChanged(event: React.ChangeEvent<HTMLInputElement>): void {
+    var newSize = parseInt(event.target.value);
 
-    this.setState({
-      modalState: {
-        ...this.state.modalState,
-        ratioLocked: !this.state.modalState.ratioLocked,
-        height: shouldSyncHeight
-          ? this.state.modalState.width
-          : this.state.modalState.height,
-      },
-    });
-  }
-
-  handleWidthChanged(event: React.ChangeEvent<HTMLInputElement>): void {
-    var newWidth = parseInt(event.target.value);
-
-    if (isNaN(newWidth)) {
-      newWidth = 0;
+    if (isNaN(newSize)) {
+      newSize = 0;
     }
 
     this.setState({
       modalState: {
         ...this.state.modalState,
-        width: newWidth,
-        height: this.state.modalState.ratioLocked
-          ? newWidth
-          : this.state.modalState.height,
+        size: newSize,
       },
     });
   }
 
-  handleHeightChanged(event: React.ChangeEvent<HTMLInputElement>) {
-    var newHeight = parseInt(event.target.value);
-
-    if (isNaN(newHeight)) {
-      newHeight = 0;
-    }
-
+  handleFormatChanged(
+    event: SelectChangeEvent<ImageFormat>,
+    child: React.ReactNode
+  ): void {
     this.setState({
       modalState: {
         ...this.state.modalState,
-        height: newHeight,
+        imageFormat: event.target.value as ImageFormat,
       },
     });
   }
@@ -371,7 +353,7 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
     var parsedHtml = parser.parseFromString(emojiHtml, "text/html");
     var src = parsedHtml.getElementsByTagName("img")[0].src;
 
-    var requestUrl = `https://7uara1y3v7.execute-api.us-west-2.amazonaws.com?imageSource=${src}&imageFormat=png&width=${this.state.modalState.width}&height=${this.state.modalState.height}`;
+    var requestUrl = `https://7uara1y3v7.execute-api.us-west-2.amazonaws.com?imageSource=${src}&imageFormat=${this.state.modalState.imageFormat}&width=${this.state.modalState.size}&height=${this.state.modalState.size}`;
 
     this.setState({
       modalState: { ...this.state.modalState, isLoading: true },
@@ -388,7 +370,10 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", `${this.state.emoji.short_name}.png`); //or any other extension
+    link.setAttribute(
+      "download",
+      `${this.state.emoji.short_name}.${this.state.modalState.imageFormat}`
+    );
     document.body.appendChild(link);
     link.click();
   }
