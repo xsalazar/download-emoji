@@ -201,7 +201,7 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                     }
                   >
                     {this.state.modalState.isLoading ? (
-                      <CircularProgress size={25} />
+                      <CircularProgress size={24} />
                     ) : (
                       <Download />
                     )}
