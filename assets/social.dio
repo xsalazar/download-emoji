@@ -1,0 +1,19 @@
+<mxfile host="65bd71144e">
+    <diagram id="y3HZneM6v06Aba9P54Up" name="Page-1">
+        <mxGraphModel dx="1662" dy="1305" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" background="#FFD081" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="" style="shape=image;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=0;aspect=fixed;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNiAzNiIgd2lkdGg9IjM2IiBoZWlnaHQ9IjM2Ij48cGF0aCBmaWxsPSIjMzEzNzNEIiBkPSJNNCAzNnMtNCAwLTQtNFY0czAtNCA0LTRoMjZjMSAwIDIgMSAyIDFsMyAzczEgMSAxIDJ2MjZzMCA0LTQgNEg0eiIvPjxwYXRoIGZpbGw9IiM1NUFDRUUiIGQ9Ik01IDE5di0xczAtMiAyLTJoMjFjMiAwIDIgMiAyIDJ2MUg1eiIvPjxwYXRoIGZpbGw9IiNFMUU4RUQiIGQ9Ik01IDMyLjAyMVYxOWgyNXYxM3MwIDItMiAySDdjLTIgMC0yLTEuOTc5LTItMS45Nzl6TTEwIDNzMC0xIDEtMWgxOGMxLjA0OCAwIDEgMSAxIDF2MTBzMCAxLTEgMUgxMXMtMSAwLTEtMVYzem0xMiAxMGg1VjNoLTV2MTB6Ii8+PC9zdmc+" parent="1" vertex="1">
+                    <mxGeometry x="647" y="292" width="270" height="270" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="" style="shape=image;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=0;aspect=fixed;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNiAzNiIgd2lkdGg9IjM2IiBoZWlnaHQ9IjM2Ij48cGF0aCBmaWxsPSIjM0I4OEMzIiBkPSJNMzYgMzJjMCAyLjIwOS0xLjc5MSA0LTQgNEg0Yy0yLjIwOSAwLTQtMS43OTEtNC00VjRjMC0yLjIwOSAxLjc5MS00IDQtNGgyOGMyLjIwOSAwIDQgMS43OTEgNCA0djI4eiIvPjxwYXRoIGZpbGw9IiNGRkYiIGQ9Ik0yMiA3djloN0wxOCAyOSA3IDE2aDdWN3oiLz48L3N2Zz4=" parent="1" vertex="1">
+                    <mxGeometry x="794" y="449" width="160" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="" style="fillColor=none;strokeColor=none;strokeWidth=0;" parent="1" vertex="1">
+                    <mxGeometry width="1600" height="900" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
