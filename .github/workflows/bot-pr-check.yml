@@ -1,11 +1,11 @@
-name: GitHub Actions Bot PR Check
+name: Bot PR Check
 on:
   push:
     branches:
       - main
 
 jobs:
-  check-github-actions-bot:
+  bot-pr-check:
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'github-actions[bot]' }}
     steps:
