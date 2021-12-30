@@ -1,47 +1,33 @@
-import { Link, List, ListItem, Typography } from "@mui/material";
-import { MentionIcon, FileCodeIcon } from "@primer/octicons-react";
+import { Box, Link, Stack } from "@mui/material";
+import { FileCodeIcon, MentionIcon } from "@primer/octicons-react";
 import React from "react";
 
 export default class Footer extends React.Component {
   render() {
     return (
       <div>
-        <List
-          sx={{
-            display: "inline-flex",
-            flexDirection: "row",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {/* Link */}
-          <ListItem alignItems="center">
-            <Typography variant="body2">
-              <Link
-                href="https://github.com/xsalazar"
-                color="textPrimary"
-                aria-label="Contact Me"
-                target="_blank"
-                rel="noopener"
-              >
-                <MentionIcon size="small" verticalAlign="middle" />
-              </Link>
-            </Typography>
-          </ListItem>
-          {/* Link */}
-          <ListItem alignItems="center">
-            <Typography variant="body2">
-              <Link
-                href="https://github.com/xsalazar/download-emoji"
-                color="textPrimary"
-                aria-label="Source Code"
-                target="_blank"
-                rel="noopener"
-              >
-                <FileCodeIcon size="small" verticalAlign="middle" />
-              </Link>
-            </Typography>
-          </ListItem>
-        </List>
+        <Box component="footer" sx={{ top: "auto", bottom: 0, py: 4 }}>
+          <Stack spacing={4} direction="row" justifyContent="center">
+            <Link
+              href="https://github.com/xsalazar"
+              color="textPrimary"
+              aria-label="Contact Me"
+              target="_blank"
+              rel="noopener"
+            >
+              <MentionIcon size="small" verticalAlign="middle" />
+            </Link>
+            <Link
+              href="https://github.com/xsalazar/download-emoji"
+              color="textPrimary"
+              aria-label="Source Code"
+              target="_blank"
+              rel="noopener"
+            >
+              <FileCodeIcon size="small" verticalAlign="middle" />
+            </Link>
+          </Stack>
+        </Box>
       </div>
     );
   }

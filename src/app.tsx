@@ -3,14 +3,7 @@ import Footer from "./Components/footer";
 
 export default function App() {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "calc(100vh - 56px)",
-        alignItems: "center",
-      }}
-    >
+    <div>
       <EmojiGrid />
       <Footer />
     </div>
