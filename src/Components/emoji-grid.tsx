@@ -69,7 +69,7 @@ export default class EmojiGrid extends React.Component<GridProps, GridState> {
     });
 
     return (
-      <div>
+      <div style={{ minHeight: "calc(100vh - 200px)" }}>
         <Container maxWidth="sm">
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <Tabs

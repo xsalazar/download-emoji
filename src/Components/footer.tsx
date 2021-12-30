@@ -6,7 +6,7 @@ export default class Footer extends React.Component {
   render() {
     return (
       <div>
-        <Box component="footer" sx={{ top: "auto", bottom: 0, py: 4 }}>
+        <Box component="footer" sx={{ py: 4 }}>
           <Stack spacing={4} direction="row" justifyContent="center">
             <Link
               href="https://github.com/xsalazar"
