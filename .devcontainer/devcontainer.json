@@ -1,4 +1,7 @@
 {
   "image": "node:17",
-  "extensions": ["esbenp.prettier-vscode"]
+  "extensions": ["esbenp.prettier-vscode"],
+  "features": {
+    "github-cli": "latest"
+  }
 }
