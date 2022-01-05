@@ -7,7 +7,6 @@ on:
 permissions:
   pull-requests: write
   contents: write
-  actions: write
 
 jobs:
   auto-merge:
@@ -35,15 +34,4 @@ jobs:
         run: gh pr merge --merge "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-      - name: Checkout code 🛎
-        uses: actions/checkout@v2
-        with:
-          persist-credentials: false
-
-      - name: Run the Deploy workflow 🚀
-        if: ${{steps.dependabot-metadata.outputs.update-type == 'version-update:semver-minor' || steps.dependabot-metadata.outputs.update-type == 'version-update:semver-patch'}}
-        run: gh workflow run deploy.yml
-        env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
