@@ -69,8 +69,9 @@ export default class EmojiGrid extends React.Component<GridProps, GridState> {
     });
 
     return (
-      <div style={{ minHeight: "calc(100vh - 200px)" }}>
+      <div style={{ height: "calc(100vh - 200px)" }}>
         <Container maxWidth="sm">
+          {/* Tabs */}
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <Tabs
               value={this.state.selectedTab}
@@ -84,9 +85,20 @@ export default class EmojiGrid extends React.Component<GridProps, GridState> {
               })}
             </Tabs>
           </Box>
-          <ImageList cols={8} gap={4}>
-            {emojiToRender}
-          </ImageList>
+
+          {/* Emoji List */}
+          <Box
+            sx={{
+              mx: 3,
+              height: "calc(100vh - 250px)",
+              overflowY: "auto",
+              justifyItems: "center",
+            }}
+          >
+            <ImageList cols={8} gap={4}>
+              {emojiToRender}
+            </ImageList>
+          </Box>
         </Container>
       </div>
     );
