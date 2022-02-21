@@ -44,6 +44,7 @@ interface EmojiState {
 enum ImageFormat {
   png = "png",
   jpeg = "jpeg",
+  svg = "svg",
 }
 
 const maxImageSize = 16384;
@@ -202,6 +203,9 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                   <TextField
                     label="size"
                     size="small"
+                    disabled={
+                      this.state.modalState.imageFormat === ImageFormat.svg // SVGs don't have a "size", so disable this input
+                    }
                     value={this.state.modalState.size}
                     onChange={this.handleSizeChanged}
                     inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
@@ -228,6 +232,7 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                     >
                       <MenuItem value={ImageFormat.png}>.png</MenuItem>
                       <MenuItem value={ImageFormat.jpeg}>.jpeg</MenuItem>
+                      <MenuItem value={ImageFormat.svg}>.svg</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -353,7 +358,15 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
     var parsedHtml = parser.parseFromString(emojiHtml, "text/html");
     var src = parsedHtml.getElementsByTagName("img")[0].src;
 
-    var requestUrl = `https://7uara1y3v7.execute-api.us-west-2.amazonaws.com?imageSource=${src}&imageFormat=${this.state.modalState.imageFormat}&width=${this.state.modalState.size}&height=${this.state.modalState.size}`;
+    var requestUrl: string;
+
+    if (this.state.modalState.imageFormat === ImageFormat.svg) {
+      // If we want an SVG, we can just download the URL we already have
+      requestUrl = src;
+    } else {
+      // Otherwise, we need to make an external request to convert it
+      requestUrl = `https://7uara1y3v7.execute-api.us-west-2.amazonaws.com?imageSource=${src}&imageFormat=${this.state.modalState.imageFormat}&width=${this.state.modalState.size}&height=${this.state.modalState.size}`;
+    }
 
     this.setState({
       modalState: { ...this.state.modalState, isLoading: true },
