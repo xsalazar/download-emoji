@@ -7,7 +7,7 @@
     "@emotion/styled": "^11.8.1",
     "@fontsource/roboto": "^4.5.3",
     "@mui/icons-material": "^5.4.4",
-    "@mui/material": "^5.4.4",
+    "@mui/material": "^5.5.0",
     "@primer/octicons-react": "^17.0.0",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.3",
