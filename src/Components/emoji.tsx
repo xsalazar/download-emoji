@@ -264,15 +264,19 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
   }
 
   createEmoji(codePoint: string) {
-    return {
-      __html: twemoji.parse(
-        codePoint.split("-").map(twemoji.convert.fromCodePoint).join(""),
-        {
-          ext: ".svg",
-          folder: "svg",
-        }
-      ),
-    };
+    const div = document.createElement("div");
+
+    div.textContent = codePoint
+      .split("-")
+      .map(twemoji.convert.fromCodePoint)
+      .join("");
+
+    twemoji.parse(div, {
+      ext: ".svg",
+      folder: "svg",
+    });
+
+    return { __html: div.innerHTML };
   }
 
   openModal() {
@@ -344,18 +348,19 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
 
   async handleDownloadClick() {
     var parser = new DOMParser();
-    var emojiHtml = twemoji.parse(
-      this.state.modalState.selectedCodepoint
-        .split("-")
-        .map(twemoji.convert.fromCodePoint)
-        .join(""),
-      {
-        ext: ".svg",
-        folder: "svg",
-      }
-    );
 
-    var parsedHtml = parser.parseFromString(emojiHtml, "text/html");
+    const div = document.createElement("div");
+    div.textContent = this.state.modalState.selectedCodepoint
+      .split("-")
+      .map(twemoji.convert.fromCodePoint)
+      .join("");
+
+    twemoji.parse(div, {
+      ext: ".svg",
+      folder: "svg",
+    });
+
+    var parsedHtml = parser.parseFromString(div.innerHTML, "text/html");
     var src = parsedHtml.getElementsByTagName("img")[0].src;
 
     var requestUrl: string;
