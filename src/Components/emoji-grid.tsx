@@ -1,45 +1,46 @@
 import React from "react";
 import Emoji, { EmojiDatasource, EmojiVariation } from "./emoji";
 import emojiDatasource from "emoji-datasource/emoji_pretty.json";
-import { Container, ImageList, Tab, Tabs, Box } from "@mui/material";
+import { Container, Tab, Tabs, Box } from "@mui/material";
+import { imageListItemClasses } from "@mui/material/ImageListItem";
 import { v4 as uuidv4 } from "uuid";
 
 interface GridProps {}
 
 interface GridState {
-  sortedEmojis: Array<EmojiDatasource>;
   emojis: Array<EmojiDatasource>;
   emojiCategories: Array<string>;
   selectedTab: number;
+  sortedEmojis: Array<EmojiDatasource>;
 }
 
 export default class EmojiGrid extends React.Component<GridProps, GridState> {
   constructor(props: GridProps) {
     super(props);
 
-    var selectedTab = 0;
+    const defaultSelectedTab = 0;
 
-    var sortedEmojis = emojiDatasource
+    const sortedEmojis = emojiDatasource
       .sort((e1, e2) => {
         return e1.sort_order > e2.sort_order ? 1 : -1;
       })
       .filter((e: EmojiDatasource) => e.sort_order !== 159); // Filter out eye in speech bubble. See: https://git.io/JDj18
 
-    var emojiCategories = sortedEmojis
+    const emojiCategories = sortedEmojis
       .map((e: EmojiDatasource) => e.category)
       .filter((category: string, index: number, self: Array<string>) => {
         return self.indexOf(category) === index;
       });
 
-    var emojis = sortedEmojis.filter((e: EmojiDatasource) => {
-      return e.category === emojiCategories[selectedTab];
+    const emojis = sortedEmojis.filter((e: EmojiDatasource) => {
+      return e.category === emojiCategories[defaultSelectedTab];
     });
 
     this.state = {
       sortedEmojis,
       emojis,
       emojiCategories,
-      selectedTab,
+      selectedTab: defaultSelectedTab,
     };
 
     this.handleSelectedTabChanged = this.handleSelectedTabChanged.bind(this);
@@ -47,6 +48,7 @@ export default class EmojiGrid extends React.Component<GridProps, GridState> {
 
   render() {
     const emojiToRender = new Array<JSX.Element>();
+
     this.state.emojis.forEach((e: EmojiDatasource) => {
       var emojiVariations = new Array<EmojiVariation>();
       if (e.skin_variations) {
@@ -58,6 +60,7 @@ export default class EmojiGrid extends React.Component<GridProps, GridState> {
           }
         );
       }
+
       emojiToRender.push(
         <Emoji
           key={uuidv4()}
@@ -95,9 +98,23 @@ export default class EmojiGrid extends React.Component<GridProps, GridState> {
               justifyItems: "center",
             }}
           >
-            <ImageList cols={8} gap={4}>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "repeat(4, 1fr)",
+                  sm: "repeat(5, 1fr)",
+                  md: "repeat(7, 1fr)",
+                  lg: "repeat(7, 1fr)",
+                  xl: "repeat(8, 1fr)",
+                },
+                [`& .${imageListItemClasses.root}`]: {
+                  display: "flex",
+                },
+              }}
+            >
               {emojiToRender}
-            </ImageList>
+            </Box>
           </Box>
         </Container>
       </div>

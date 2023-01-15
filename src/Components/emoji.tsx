@@ -110,7 +110,6 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
           onClick={this.openModal}
           key={uuidv4()}
           sx={{
-            maxWidth: 32,
             borderRadius: 2,
             padding: 0.5,
             "&:hover": {
@@ -118,9 +117,12 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
             },
           }}
         >
-          <div
-            dangerouslySetInnerHTML={this.createEmoji(this.state.codepoint)}
-          ></div>
+          {React.createElement("img", {
+            src: this.createEmoji(this.state.codepoint),
+            height: "32px",
+            width: "32px",
+            loading: "lazy",
+          })}
         </ImageListItem>
 
         {/* Modal */}
@@ -149,11 +151,13 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
 
               {/* Image */}
               <Grid item xs={12} sx={{ p: 1, pb: 2 }}>
-                <div
-                  dangerouslySetInnerHTML={this.createEmoji(
+                {React.createElement("img", {
+                  src: this.createEmoji(
                     this.state.modalState.selectedCodepoint
-                  )}
-                ></div>
+                  ),
+                  width: "100%",
+                  loading: "lazy",
+                })}
               </Grid>
 
               {/* Variations */}
@@ -182,11 +186,10 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                             },
                           }}
                         >
-                          <div
-                            dangerouslySetInnerHTML={this.createEmoji(
-                              variation.unified
-                            )}
-                          ></div>
+                          {React.createElement("img", {
+                            src: this.createEmoji(variation.unified),
+                            loading: "lazy",
+                          })}
                         </ImageListItem>
                       );
                     })}
@@ -274,9 +277,10 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
     twemoji.parse(div, {
       ext: ".svg",
       folder: "svg",
+      base: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/",
     });
 
-    return { __html: div.innerHTML };
+    return div.getElementsByTagName("img")[0].src;
   }
 
   openModal() {
@@ -358,6 +362,7 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
     twemoji.parse(div, {
       ext: ".svg",
       folder: "svg",
+      base: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/",
     });
 
     var parsedHtml = parser.parseFromString(div.innerHTML, "text/html");
