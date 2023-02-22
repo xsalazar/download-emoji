@@ -47,6 +47,6 @@
   },
   "devDependencies": {
     "@types/twemoji": "^13.1.2",
-    "@types/uuid": "^9.0.0"
+    "@types/uuid": "^9.0.1"
   }
 }
