@@ -6,7 +6,7 @@
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@fontsource/roboto": "^4.5.8",
-    "@mui/icons-material": "^5.11.11",
+    "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.11.15",
     "@primer/octicons-react": "^18.3.0",
     "@types/react": "^18.0.33",
