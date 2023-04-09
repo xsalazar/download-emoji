@@ -118,10 +118,10 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
           }}
         >
           {React.createElement("img", {
+            loading: "lazy",
             src: this.createEmoji(this.state.codepoint),
             height: "32px",
             width: "32px",
-            loading: "lazy",
           })}
         </ImageListItem>
 
@@ -152,11 +152,11 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
               {/* Image */}
               <Grid item xs={12} sx={{ p: 1, pb: 2 }}>
                 {React.createElement("img", {
+                  loading: "lazy",
                   src: this.createEmoji(
                     this.state.modalState.selectedCodepoint
                   ),
                   width: "100%",
-                  loading: "lazy",
                 })}
               </Grid>
 
@@ -187,8 +187,8 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                           }}
                         >
                           {React.createElement("img", {
-                            src: this.createEmoji(variation.unified),
                             loading: "lazy",
+                            src: this.createEmoji(variation.unified),
                           })}
                         </ImageListItem>
                       );
