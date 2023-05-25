@@ -9,7 +9,7 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.2",
     "@primer/octicons-react": "^18.3.0",
-    "@types/react": "^18.2.6",
+    "@types/react": "^18.2.7",
     "@types/react-dom": "^18.2.4",
     "axios": "^1.4.0",
     "emoji-datasource": "^14.0.0",
