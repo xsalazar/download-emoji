@@ -18,9 +18,9 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
-import twemoji from "twemoji";
 import { Download } from "@mui/icons-material";
 import axios from "axios";
+import twemoji from "@twemoji/api";
 
 interface EmojiProps {
   codepoint: string;
@@ -277,7 +277,7 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
     twemoji.parse(div, {
       ext: ".svg",
       folder: "svg",
-      base: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/",
+      base: "https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/",
     });
 
     return div.getElementsByTagName("img")[0].src;
@@ -362,7 +362,7 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
     twemoji.parse(div, {
       ext: ".svg",
       folder: "svg",
-      base: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/",
+      base: "https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/",
     });
 
     var parsedHtml = parser.parseFromString(div.innerHTML, "text/html");
