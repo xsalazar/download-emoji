@@ -72,52 +72,58 @@ export default class EmojiGrid extends React.Component<GridProps, GridState> {
     });
 
     return (
-      <div style={{ height: "calc(100vh - 200px)" }}>
-        <Container maxWidth="sm">
-          {/* Tabs */}
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <Tabs
-              value={this.state.selectedTab}
-              onChange={this.handleSelectedTabChanged}
-              variant="scrollable"
-              scrollButtons
-              allowScrollButtonsMobile
-            >
-              {this.state.emojiCategories.map((category: string) => {
-                return <Tab label={category} key={category}></Tab>;
-              })}
-            </Tabs>
-          </Box>
+      <Container
+        maxWidth="sm"
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
+          overflowY: "scroll",
+        }}
+      >
+        {/* Tabs */}
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Tabs
+            value={this.state.selectedTab}
+            onChange={this.handleSelectedTabChanged}
+            variant="scrollable"
+            scrollButtons
+            allowScrollButtonsMobile
+          >
+            {this.state.emojiCategories.map((category: string) => {
+              return <Tab label={category} key={category}></Tab>;
+            })}
+          </Tabs>
+        </Box>
 
-          {/* Emoji List */}
+        {/* Emoji List */}
+        <Box
+          sx={{
+            mx: 3,
+            justifyItems: "center",
+            flexGrow: "1",
+            overflowY: "scroll",
+          }}
+        >
           <Box
             sx={{
-              mx: 3,
-              height: "calc(100vh - 250px)",
-              overflowY: "auto",
-              justifyItems: "center",
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "repeat(4, 1fr)",
+                sm: "repeat(5, 1fr)",
+                md: "repeat(7, 1fr)",
+                lg: "repeat(7, 1fr)",
+                xl: "repeat(8, 1fr)",
+              },
+              [`& .${imageListItemClasses.root}`]: {
+                display: "flex",
+              },
             }}
           >
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: {
-                  xs: "repeat(4, 1fr)",
-                  sm: "repeat(5, 1fr)",
-                  md: "repeat(7, 1fr)",
-                  lg: "repeat(7, 1fr)",
-                  xl: "repeat(8, 1fr)",
-                },
-                [`& .${imageListItemClasses.root}`]: {
-                  display: "flex",
-                },
-              }}
-            >
-              {emojiToRender}
-            </Box>
+            {emojiToRender}
           </Box>
-        </Container>
-      </div>
+        </Box>
+      </Container>
     );
   }
 
