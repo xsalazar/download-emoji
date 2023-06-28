@@ -78,7 +78,7 @@ export default class EmojiGrid extends React.Component<GridProps, GridState> {
           flexGrow: 1,
           display: "flex",
           flexDirection: "column",
-          overflowY: "scroll",
+          overflowY: "auto",
         }}
       >
         {/* Tabs */}
