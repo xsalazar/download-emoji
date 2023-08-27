@@ -1,6 +1,6 @@
 # 💾 Download Emoji
 
-This repository holds the source code for the website [https://downloademoji.dev](https://downloademoji.dev) and was bootstrapped using [`create-react-app`](https://github.com/facebook/create-react-app).
+This repository holds the source code for the website [https://downloademoji.dev](https://downloademoji.dev).
 
 This website allows for quick browsing and downloading of large, high-quality versions of emoji, leveraging the [image-converter](https://github.com/xsalazar/image-converter) backend application running in AWS.
 
