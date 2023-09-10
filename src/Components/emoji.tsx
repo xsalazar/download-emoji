@@ -103,6 +103,8 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
   }
 
   render() {
+    const emojiUrl = this.createEmoji(this.state.codepoint);
+
     return (
       <div>
         {/* List Item */}
@@ -117,12 +119,13 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
             },
           }}
         >
-          {React.createElement("img", {
-            loading: "lazy",
-            src: this.createEmoji(this.state.codepoint),
-            height: "32px",
-            width: "32px",
-          })}
+          <img
+            loading="lazy"
+            width="32px"
+            height="32px"
+            src={emojiUrl}
+            alt={this.state.emoji.short_name}
+          />
         </ImageListItem>
 
         {/* Modal */}
