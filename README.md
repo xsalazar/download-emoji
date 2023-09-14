@@ -13,10 +13,10 @@ This repository leverages [VSCode's devcontainer](https://code.visualstudio.com/
 To get started:
 
 ```bash
-npm init && npm start
+npm install && npm start
 ```
 
-This will start the application on your local machine, running on [http://localhost:3000/](http://localhost:3000/).
+This will start the application on your local machine, running on [http://localhost:5173/](http://localhost:5173).
 
 ⚠️ Note that image downloads will not work locally as the backend only allows CORS requests from [https://downloademoji.dev](https://downloademoji.dev).
 
