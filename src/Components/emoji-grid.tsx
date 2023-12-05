@@ -47,30 +47,6 @@ export default class EmojiGrid extends React.Component<GridProps, GridState> {
   }
 
   render() {
-    const emojiToRender = new Array<JSX.Element>();
-
-    this.state.emojis.forEach((e: EmojiDatasource) => {
-      var emojiVariations = new Array<EmojiVariation>();
-      if (e.skin_variations) {
-        Object.values(e.skin_variations).forEach(
-          (variation: EmojiVariation | undefined) => {
-            if (variation) {
-              emojiVariations.push(variation);
-            }
-          }
-        );
-      }
-
-      emojiToRender.push(
-        <Emoji
-          key={uuidv4()}
-          codepoint={e.unified}
-          emoji={e}
-          variations={emojiVariations}
-        />
-      );
-    });
-
     return (
       <Container
         maxWidth="sm"
@@ -120,7 +96,27 @@ export default class EmojiGrid extends React.Component<GridProps, GridState> {
               },
             }}
           >
-            {emojiToRender}
+            {this.state.emojis.map((e: EmojiDatasource) => {
+              var emojiVariations = new Array<EmojiVariation>();
+              if (e.skin_variations) {
+                Object.values(e.skin_variations).forEach(
+                  (variation: EmojiVariation | undefined) => {
+                    if (variation) {
+                      emojiVariations.push(variation);
+                    }
+                  }
+                );
+              }
+
+              return (
+                <Emoji
+                  key={uuidv4()}
+                  codepoint={e.unified}
+                  emoji={e}
+                  variations={emojiVariations}
+                />
+              );
+            })}
           </Box>
         </Box>
       </Container>

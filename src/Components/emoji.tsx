@@ -103,7 +103,12 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
   }
 
   render() {
-    const emojiUrl = this.createEmoji(this.state.codepoint);
+    let emojiUrl = "";
+    try {
+      emojiUrl = this.createEmoji(this.state.codepoint);
+    } catch (e) {
+      return null;
+    }
 
     return (
       <div>
@@ -274,16 +279,15 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
 
     div.textContent = codePoint
       .split("-")
-      .map(twemoji.convert.fromCodePoint)
+      .map((part) => twemoji.convert.fromCodePoint(part))
       .join("");
 
     twemoji.parse(div, {
       ext: ".svg",
       folder: "svg",
-      base: "https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/",
     });
 
-    return div.getElementsByTagName("img")[0].src;
+    return div.querySelector("img")!.src;
   }
 
   openModal() {
