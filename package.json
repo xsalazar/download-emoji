@@ -31,7 +31,7 @@
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^9.0.7",
     "@vitejs/plugin-react": "^4.2.1",
-    "axios": "^1.6.6",
+    "axios": "^1.6.7",
     "emoji-datasource": "15.0.1",
     "eslint-config-react-app": "^7.0.1",
     "react": "^18.2.0",
