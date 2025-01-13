@@ -27,7 +27,7 @@
     "@mui/material": "^5.16.14",
     "@primer/octicons-react": "^19.14.0",
     "@twemoji/api": "^15.1.0",
-    "@types/react": "^19.0.4",
+    "@types/react": "^19.0.6",
     "@types/react-dom": "^19.0.3",
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react": "^4.3.4",
