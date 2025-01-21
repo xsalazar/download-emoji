@@ -16,7 +16,7 @@ To get started:
 npm install && npm start
 ```
 
-This will start the application on your local machine, running on [http://localhost:5173/](http://localhost:5173).
+This will start the application on your local machine, running on [http://127.0.0.1:5173/](http://127.0.0.1:5173).
 
 ⚠️ Note that image downloads will not work locally as the backend only allows CORS requests from [https://downloademoji.dev](https://downloademoji.dev).
 
