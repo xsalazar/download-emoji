@@ -1,9 +1,12 @@
-import React from "react";
-import Emoji, { EmojiDatasource, EmojiVariation } from "./emoji";
-import emojiDatasource from "emoji-datasource/emoji_pretty.json";
-import { Container, Tab, Tabs, Box } from "@mui/material";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
 import { imageListItemClasses } from "@mui/material/ImageListItem";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import emojiDatasource from "emoji-datasource/emoji_pretty.json";
+import React from "react";
 import { v4 as uuidv4 } from "uuid";
+import Emoji, { EmojiDatasource, EmojiVariation } from "./emoji";
 
 interface GridProps {}
 

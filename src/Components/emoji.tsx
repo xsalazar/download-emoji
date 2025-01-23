@@ -1,26 +1,23 @@
-import { v4 as uuidv4 } from "uuid";
-import {
-  Box,
-  ImageListItem,
-  Modal,
-  Grid,
-  Typography,
-  IconButton,
-  TextField,
-  CircularProgress,
-  InputAdornment,
-  ImageList,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import React from "react";
 import { Download } from "@mui/icons-material";
-import axios from "axios";
+import CloseIcon from "@mui/icons-material/Close";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import FormControl from "@mui/material/FormControl";
+import Grid from "@mui/material/Grid2";
+import IconButton from "@mui/material/IconButton";
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
+import InputAdornment from "@mui/material/InputAdornment";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Modal from "@mui/material/Modal";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import twemoji from "@twemoji/api";
+import axios from "axios";
+import React from "react";
+import { v4 as uuidv4 } from "uuid";
 
 interface EmojiProps {
   codepoint: string;
@@ -138,16 +135,15 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
           <Box sx={modalStyle}>
             <Grid container>
               {/* Close Icon */}
-              <Grid item container xs={12} sx={{ pb: 1 }}>
-                <Grid item xs={10} sx={{ pl: 1 }} alignSelf="center">
+              <Grid container size={12} sx={{ pb: 1 }}>
+                <Grid size={10} sx={{ pl: 1 }} alignSelf="center">
                   <Typography>
                     {this.getFormattedName(this.state.emoji.name)}
                   </Typography>
                 </Grid>
                 <Grid
-                  item
                   container
-                  xs={2}
+                  size={2}
                   justifyContent="flex-end"
                   alignSelf="center"
                 >
@@ -158,7 +154,7 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
               </Grid>
 
               {/* Image */}
-              <Grid item xs={12} sx={{ p: 1, pb: 2 }}>
+              <Grid size={12} sx={{ p: 1, pb: 2 }}>
                 {React.createElement("img", {
                   loading: "lazy",
                   src: this.createEmoji(
@@ -170,7 +166,7 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
 
               {/* Variations */}
               {this.state.variations && this.state.variations.length > 1 ? (
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <ImageList cols={6}>
                     {this.state.variations.map((variation: EmojiVariation) => {
                       return (
@@ -208,9 +204,9 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
               )}
 
               {/* Download Options */}
-              <Grid item container xs={12} sx={{ p: 1 }}>
+              <Grid container size={12} sx={{ p: 1 }}>
                 {/* Size Input */}
-                <Grid item xs={5} sx={{ pr: 1 }}>
+                <Grid size={5} sx={{ pr: 1 }}>
                   <TextField
                     label="size"
                     size="small"
@@ -219,21 +215,26 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                     }
                     value={this.state.modalState.size}
                     onChange={this.handleSizeChanged}
-                    inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
                     error={
                       this.state.modalState.size === 0 ||
                       this.state.modalState.size > maxImageSize
                     }
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">px</InputAdornment>
-                      ),
+                    slotProps={{
+                      htmlInput: {
+                        inputMode: "numeric",
+                        pattern: "[0-9]*",
+                      },
+                      input: {
+                        endAdornment: (
+                          <InputAdornment position="end">px</InputAdornment>
+                        ),
+                      },
                     }}
                   />
                 </Grid>
 
                 {/* Image Format */}
-                <Grid item xs={5} sx={{ pr: 1 }}>
+                <Grid size={5} sx={{ pr: 1 }}>
                   <FormControl fullWidth size="small">
                     <InputLabel>format</InputLabel>
                     <Select
@@ -249,7 +250,7 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
                 </Grid>
 
                 {/* Download Button */}
-                <Grid item container xs={2} justifyContent="flex-end">
+                <Grid container size={2} justifyContent="flex-end">
                   <IconButton
                     color="primary"
                     onClick={this.handleDownloadClick}

@@ -1,4 +1,7 @@
-import { Box, Link, Stack, Tooltip } from "@mui/material";
+import Box from "@mui/material/Box";
+import Link from "@mui/material/Link";
+import Stack from "@mui/material/Stack";
+import Tooltip from "@mui/material/Tooltip";
 import {
   FileCodeIcon,
   MentionIcon,
