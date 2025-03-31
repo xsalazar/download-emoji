@@ -34,7 +34,7 @@
     "axios": "^1.8.4",
     "emoji-datasource": "15.1.2",
     "eslint-config-react-app": "^7.0.1",
-    "react": "^19.0.0",
+    "react": "^19.1.0",
     "react-dom": "^19.0.0",
     "typescript": "^5.8.2",
     "uuid": "^11.1.0",
