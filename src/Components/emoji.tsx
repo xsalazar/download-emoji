@@ -3,7 +3,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import FormControl from "@mui/material/FormControl";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
@@ -16,27 +16,8 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import twemoji from "@twemoji/api";
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-
-interface EmojiProps {
-  codepoint: string;
-  emoji: EmojiDatasource;
-  variations?: Array<EmojiVariation>;
-}
-
-interface EmojiState {
-  codepoint: string;
-  emoji: EmojiDatasource;
-  variations?: Array<EmojiVariation>;
-  modalState: {
-    selectedCodepoint: string;
-    isOpen: boolean;
-    isLoading: boolean;
-    size: number;
-    imageFormat: ImageFormat;
-  };
-}
 
 enum ImageFormat {
   png = "png",
@@ -57,225 +38,47 @@ const modalStyle = {
   p: 2,
 };
 
-export default class Emoji extends React.Component<EmojiProps, EmojiState> {
-  constructor(props: EmojiProps) {
-    super(props);
-
-    var variations = new Array<EmojiVariation>();
-    if (props.variations) {
-      var defaultVariation: EmojiVariation = {
-        unified: props.emoji.unified,
-        image: props.emoji.image,
-        sheet_x: props.emoji.sheet_x,
-        sheet_y: props.emoji.sheet_y,
-        added_in: props.emoji.added_in,
-        has_img_apple: props.emoji.has_img_apple,
-        has_img_google: props.emoji.has_img_google,
-        has_img_twitter: props.emoji.has_img_twitter,
-        has_img_facebook: props.emoji.has_img_facebook,
-      };
-
-      variations = [defaultVariation, ...props.variations];
-    }
-
-    this.state = {
-      codepoint: props.codepoint,
-      emoji: props.emoji,
-      variations: variations,
-      modalState: {
-        selectedCodepoint: props.codepoint,
-        isOpen: false,
-        isLoading: false,
-        size: 64,
-        imageFormat: ImageFormat.png,
-      },
+export default function Emoji({
+  codepoint,
+  emoji,
+  variations,
+}: {
+  codepoint: string;
+  emoji: EmojiDatasource;
+  variations?: Array<EmojiVariation>;
+}) {
+  var outputVariations = new Array<EmojiVariation>();
+  if (variations) {
+    var defaultVariation: EmojiVariation = {
+      unified: emoji.unified,
+      image: emoji.image,
+      sheet_x: emoji.sheet_x,
+      sheet_y: emoji.sheet_y,
+      added_in: emoji.added_in,
+      has_img_apple: emoji.has_img_apple,
+      has_img_google: emoji.has_img_google,
+      has_img_twitter: emoji.has_img_twitter,
+      has_img_facebook: emoji.has_img_facebook,
     };
 
-    this.openModal = this.openModal.bind(this);
-    this.closeModal = this.closeModal.bind(this);
-    this.handleSizeChanged = this.handleSizeChanged.bind(this);
-    this.handleFormatChanged = this.handleFormatChanged.bind(this);
-    this.handleDownloadClick = this.handleDownloadClick.bind(this);
-    this.handleVariationClick = this.handleVariationClick.bind(this);
+    outputVariations = [defaultVariation, ...variations];
   }
 
-  render() {
-    let emojiUrl = "";
-    try {
-      emojiUrl = this.createEmoji(this.state.codepoint);
-    } catch (e) {
-      return null;
-    }
+  const [modalState, setModalState] = useState<{
+    selectedCodepoint: string;
+    isOpen: boolean;
+    isLoading: boolean;
+    size: number;
+    imageFormat: ImageFormat;
+  }>({
+    selectedCodepoint: codepoint,
+    isOpen: false,
+    isLoading: false,
+    size: 64,
+    imageFormat: ImageFormat.png,
+  });
 
-    return (
-      <div>
-        {/* List Item */}
-        <ImageListItem
-          onClick={this.openModal}
-          key={uuidv4()}
-          sx={{
-            borderRadius: 2,
-            padding: 0.5,
-            "&:hover": {
-              backgroundColor: () => this.getRandomBackgroundColor(),
-            },
-          }}
-        >
-          <img
-            loading="lazy"
-            width="32px"
-            height="32px"
-            src={emojiUrl}
-            alt={this.state.emoji.short_name}
-          />
-        </ImageListItem>
-
-        {/* Modal */}
-        <Modal open={this.state.modalState.isOpen} onClose={this.closeModal}>
-          <Box sx={modalStyle}>
-            <Grid container>
-              {/* Close Icon */}
-              <Grid container size={12} sx={{ pb: 1 }}>
-                <Grid size={10} sx={{ pl: 1 }} alignSelf="center">
-                  <Typography>
-                    {this.getFormattedName(this.state.emoji.name)}
-                  </Typography>
-                </Grid>
-                <Grid
-                  container
-                  size={2}
-                  justifyContent="flex-end"
-                  alignSelf="center"
-                >
-                  <IconButton onClick={this.closeModal}>
-                    <CloseIcon />
-                  </IconButton>
-                </Grid>
-              </Grid>
-
-              {/* Image */}
-              <Grid size={12} sx={{ p: 1, pb: 2 }}>
-                {React.createElement("img", {
-                  loading: "lazy",
-                  src: this.createEmoji(
-                    this.state.modalState.selectedCodepoint
-                  ),
-                  width: "100%",
-                })}
-              </Grid>
-
-              {/* Variations */}
-              {this.state.variations && this.state.variations.length > 1 ? (
-                <Grid size={12}>
-                  <ImageList cols={6}>
-                    {this.state.variations.map((variation: EmojiVariation) => {
-                      return (
-                        <ImageListItem
-                          onClick={(event) =>
-                            this.handleVariationClick(variation.unified, event)
-                          }
-                          key={uuidv4()}
-                          sx={{
-                            textAlign: "center",
-                            borderRadius: 2,
-                            padding: 0.5,
-                            backgroundColor: (theme) =>
-                              variation.unified ===
-                              this.state.modalState.selectedCodepoint
-                                ? theme.palette.action.selected
-                                : "",
-                            "&:hover": {
-                              backgroundColor: (theme) =>
-                                theme.palette.action.hover,
-                            },
-                          }}
-                        >
-                          {React.createElement("img", {
-                            loading: "lazy",
-                            src: this.createEmoji(variation.unified),
-                          })}
-                        </ImageListItem>
-                      );
-                    })}
-                  </ImageList>
-                </Grid>
-              ) : (
-                <div></div>
-              )}
-
-              {/* Download Options */}
-              <Grid container size={12} sx={{ p: 1 }}>
-                {/* Size Input */}
-                <Grid size={5} sx={{ pr: 1 }}>
-                  <TextField
-                    label="size"
-                    size="small"
-                    disabled={
-                      this.state.modalState.imageFormat === ImageFormat.svg // SVGs don't have a "size", so disable this input
-                    }
-                    value={this.state.modalState.size}
-                    onChange={this.handleSizeChanged}
-                    error={
-                      this.state.modalState.size === 0 ||
-                      this.state.modalState.size > maxImageSize
-                    }
-                    slotProps={{
-                      htmlInput: {
-                        inputMode: "numeric",
-                        pattern: "[0-9]*",
-                      },
-                      input: {
-                        endAdornment: (
-                          <InputAdornment position="end">px</InputAdornment>
-                        ),
-                      },
-                    }}
-                  />
-                </Grid>
-
-                {/* Image Format */}
-                <Grid size={5} sx={{ pr: 1 }}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel>format</InputLabel>
-                    <Select
-                      label="format"
-                      value={this.state.modalState.imageFormat}
-                      onChange={this.handleFormatChanged}
-                    >
-                      <MenuItem value={ImageFormat.png}>.png</MenuItem>
-                      <MenuItem value={ImageFormat.jpeg}>.jpeg</MenuItem>
-                      <MenuItem value={ImageFormat.svg}>.svg</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-
-                {/* Download Button */}
-                <Grid container size={2} justifyContent="flex-end">
-                  <IconButton
-                    color="primary"
-                    onClick={this.handleDownloadClick}
-                    disabled={
-                      this.state.modalState.size === 0 ||
-                      this.state.modalState.size > maxImageSize ||
-                      this.state.modalState.isLoading
-                    }
-                  >
-                    {this.state.modalState.isLoading ? (
-                      <CircularProgress size={24} />
-                    ) : (
-                      <Download />
-                    )}
-                  </IconButton>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Box>
-        </Modal>
-      </div>
-    );
-  }
-
-  createEmoji(codePoint: string) {
+  const createEmoji = (codePoint: string) => {
     const div = document.createElement("div");
 
     div.textContent = codePoint
@@ -289,26 +92,24 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
     });
 
     return div.querySelector("img")!.src;
-  }
+  };
 
-  openModal() {
-    this.setState({ modalState: { ...this.state.modalState, isOpen: true } });
-  }
+  const openModal = () => {
+    setModalState({ ...modalState, isOpen: true });
+  };
 
   // Reset modal state when closing
-  closeModal() {
-    this.setState({
-      modalState: {
-        ...this.state.modalState,
-        selectedCodepoint: this.state.codepoint,
-        isOpen: false,
-        size: 64,
-        imageFormat: ImageFormat.png,
-      },
+  const closeModal = () => {
+    setModalState({
+      ...modalState,
+      selectedCodepoint: codepoint,
+      isOpen: false,
+      size: 64,
+      imageFormat: ImageFormat.png,
     });
-  }
+  };
 
-  getRandomBackgroundColor(): string {
+  const getRandomBackgroundColor = (): string => {
     var partyColors = [
       "#FF6B6B",
       "#FF6BB5",
@@ -321,48 +122,40 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
       "#FF8181",
     ];
     return partyColors[Math.floor(Math.random() * partyColors.length)];
-  }
+  };
 
-  getFormattedName(name: string): string {
+  const getFormattedName = (name: string): string => {
     return name
       .toLowerCase()
       .split(" ")
       .map((w: string) => w[0].toUpperCase() + w.slice(1))
       .join(" ");
-  }
+  };
 
-  handleSizeChanged(event: React.ChangeEvent<HTMLInputElement>): void {
+  const handleSizeChanged = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     var newSize = parseInt(event.target.value);
 
     if (isNaN(newSize)) {
       newSize = 0;
     }
 
-    this.setState({
-      modalState: {
-        ...this.state.modalState,
-        size: newSize,
-      },
-    });
-  }
+    setModalState({ ...modalState, size: newSize });
+  };
 
-  handleFormatChanged(
-    event: SelectChangeEvent<ImageFormat>,
-    child: React.ReactNode
-  ): void {
-    this.setState({
-      modalState: {
-        ...this.state.modalState,
-        imageFormat: event.target.value as ImageFormat,
-      },
+  const handleFormatChanged = (event: SelectChangeEvent<ImageFormat>): void => {
+    setModalState({
+      ...modalState,
+      imageFormat: event.target.value as ImageFormat,
     });
-  }
+  };
 
-  async handleDownloadClick() {
+  const handleDownloadClick = async () => {
     var parser = new DOMParser();
 
     const div = document.createElement("div");
-    div.textContent = this.state.modalState.selectedCodepoint
+    div.textContent = modalState.selectedCodepoint
       .split("-")
       .map(twemoji.convert.fromCodePoint)
       .join("");
@@ -378,48 +171,202 @@ export default class Emoji extends React.Component<EmojiProps, EmojiState> {
 
     var requestUrl: string;
 
-    if (this.state.modalState.imageFormat === ImageFormat.svg) {
+    if (modalState.imageFormat === ImageFormat.svg) {
       // If we want an SVG, we can just download the URL we already have
       requestUrl = src;
     } else {
       // Otherwise, we need to make an external request to convert it
-      requestUrl = `https://7uara1y3v7.execute-api.us-west-2.amazonaws.com?imageSource=${src}&imageFormat=${this.state.modalState.imageFormat}&width=${this.state.modalState.size}&height=${this.state.modalState.size}`;
+      requestUrl = `https://7uara1y3v7.execute-api.us-west-2.amazonaws.com?imageSource=${src}&imageFormat=${modalState.imageFormat}&width=${modalState.size}&height=${modalState.size}`;
     }
 
-    this.setState({
-      modalState: { ...this.state.modalState, isLoading: true },
-    });
+    setModalState({ ...modalState, isLoading: true });
 
     var response = await axios.get(requestUrl, {
       responseType: "blob",
     });
 
-    this.setState({
-      modalState: { ...this.state.modalState, isLoading: false },
-    });
+    setModalState({ ...modalState, isLoading: false });
 
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
     link.href = url;
     link.setAttribute(
       "download",
-      `${this.state.emoji.short_name}.${this.state.modalState.imageFormat}`
+      `${emoji.short_name}.${modalState.imageFormat}`
     );
     document.body.appendChild(link);
     link.click();
+  };
+
+  const handleVariationClick = (variationCodepoint: string) => {
+    setModalState({ ...modalState, selectedCodepoint: variationCodepoint });
+  };
+
+  let emojiUrl = "";
+  try {
+    emojiUrl = createEmoji(codepoint);
+  } catch (e) {
+    return null;
   }
 
-  handleVariationClick(
-    variationCodepoint: string,
-    event: React.SyntheticEvent
-  ) {
-    this.setState({
-      modalState: {
-        ...this.state.modalState,
-        selectedCodepoint: variationCodepoint,
-      },
-    });
-  }
+  return (
+    <div>
+      {/* List Item */}
+      <ImageListItem
+        onClick={openModal}
+        key={uuidv4()}
+        sx={{
+          borderRadius: 2,
+          padding: 0.5,
+          "&:hover": {
+            backgroundColor: () => getRandomBackgroundColor(),
+          },
+        }}
+      >
+        <img
+          loading="lazy"
+          width="32px"
+          height="32px"
+          src={emojiUrl}
+          alt={emoji.short_name}
+        />
+      </ImageListItem>
+
+      {/* Modal */}
+      <Modal open={modalState.isOpen} onClose={closeModal}>
+        <Box sx={modalStyle}>
+          <Grid container>
+            {/* Close Icon */}
+            <Grid container size={12} sx={{ pb: 1 }}>
+              <Grid size={10} sx={{ pl: 1 }} alignSelf="center">
+                <Typography>{getFormattedName(emoji.name)}</Typography>
+              </Grid>
+              <Grid
+                container
+                size={2}
+                justifyContent="flex-end"
+                alignSelf="center"
+              >
+                <IconButton onClick={closeModal}>
+                  <CloseIcon />
+                </IconButton>
+              </Grid>
+            </Grid>
+
+            {/* Image */}
+            <Grid size={12} sx={{ p: 1, pb: 2 }}>
+              {React.createElement("img", {
+                loading: "lazy",
+                src: createEmoji(modalState.selectedCodepoint),
+                width: "100%",
+              })}
+            </Grid>
+
+            {/* Variations */}
+            {outputVariations && outputVariations.length > 1 ? (
+              <Grid size={12}>
+                <ImageList cols={6}>
+                  {outputVariations.map((variation: EmojiVariation) => {
+                    return (
+                      <ImageListItem
+                        onClick={(_) => handleVariationClick(variation.unified)}
+                        key={uuidv4()}
+                        sx={{
+                          textAlign: "center",
+                          borderRadius: 2,
+                          padding: 0.5,
+                          backgroundColor: (theme) =>
+                            variation.unified === modalState.selectedCodepoint
+                              ? theme.palette.action.selected
+                              : "",
+                          "&:hover": {
+                            backgroundColor: (theme) =>
+                              theme.palette.action.hover,
+                          },
+                        }}
+                      >
+                        {React.createElement("img", {
+                          loading: "lazy",
+                          src: createEmoji(variation.unified),
+                        })}
+                      </ImageListItem>
+                    );
+                  })}
+                </ImageList>
+              </Grid>
+            ) : (
+              <div></div>
+            )}
+
+            {/* Download Options */}
+            <Grid container size={12} sx={{ p: 1 }}>
+              {/* Size Input */}
+              <Grid size={5} sx={{ pr: 1 }}>
+                <TextField
+                  label="size"
+                  size="small"
+                  disabled={
+                    modalState.imageFormat === ImageFormat.svg // SVGs don't have a "size", so disable this input
+                  }
+                  value={modalState.size}
+                  onChange={handleSizeChanged}
+                  error={
+                    modalState.size === 0 || modalState.size > maxImageSize
+                  }
+                  slotProps={{
+                    htmlInput: {
+                      inputMode: "numeric",
+                      pattern: "[0-9]*",
+                    },
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">px</InputAdornment>
+                      ),
+                    },
+                  }}
+                />
+              </Grid>
+
+              {/* Image Format */}
+              <Grid size={5} sx={{ pr: 1 }}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>format</InputLabel>
+                  <Select
+                    label="format"
+                    value={modalState.imageFormat}
+                    onChange={handleFormatChanged}
+                  >
+                    <MenuItem value={ImageFormat.png}>.png</MenuItem>
+                    <MenuItem value={ImageFormat.jpeg}>.jpeg</MenuItem>
+                    <MenuItem value={ImageFormat.svg}>.svg</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              {/* Download Button */}
+              <Grid container size={2} justifyContent="flex-end">
+                <IconButton
+                  color="primary"
+                  onClick={handleDownloadClick}
+                  disabled={
+                    modalState.size === 0 ||
+                    modalState.size > maxImageSize ||
+                    modalState.isLoading
+                  }
+                >
+                  {modalState.isLoading ? (
+                    <CircularProgress size={24} />
+                  ) : (
+                    <Download />
+                  )}
+                </IconButton>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Box>
+      </Modal>
+    </div>
+  );
 }
 
 export interface EmojiDatasource {
