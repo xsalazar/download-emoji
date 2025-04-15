@@ -11,11 +11,9 @@ import Emoji, { EmojiDatasource, EmojiVariation } from "./emoji";
 export default function EmojiGrid() {
   const defaultSelectedTab = 0;
 
-  const sortedEmojis = emojiDatasource
-    .sort((e1, e2) => {
-      return e1.sort_order > e2.sort_order ? 1 : -1;
-    })
-    .filter((e: EmojiDatasource) => e.sort_order !== 159); // Filter out eye in speech bubble. See: https://git.io/JDj18
+  const sortedEmojis = emojiDatasource.sort((e1, e2) => {
+    return e1.sort_order > e2.sort_order ? 1 : -1;
+  });
 
   const emojiCategories = sortedEmojis
     .map((e: EmojiDatasource) => e.category)
