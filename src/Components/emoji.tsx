@@ -176,7 +176,7 @@ export default function Emoji({
       requestUrl = src;
     } else {
       // Otherwise, we need to make an external request to convert it
-      requestUrl = `https://7uara1y3v7.execute-api.us-west-2.amazonaws.com?imageSource=${src}&imageFormat=${modalState.imageFormat}&width=${modalState.size}&height=${modalState.size}`;
+      requestUrl = `https://backend.downloademoji.dev?imageSource=${src}&imageFormat=${modalState.imageFormat}&width=${modalState.size}&height=${modalState.size}`;
     }
 
     setModalState({ ...modalState, isLoading: true });
