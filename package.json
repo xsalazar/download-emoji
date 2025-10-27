@@ -29,7 +29,7 @@
     "@twemoji/api": "^16.0.1",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
-    "@vitejs/plugin-react": "^5.0.4",
+    "@vitejs/plugin-react": "^5.1.0",
     "axios": "^1.12.2",
     "emoji-datasource": "16.0.0",
     "eslint-config-react-app": "^7.0.1",
