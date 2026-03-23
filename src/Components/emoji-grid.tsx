@@ -3,10 +3,10 @@ import Container from "@mui/material/Container";
 import { imageListItemClasses } from "@mui/material/ImageListItem";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
-import emojiDatasource from "emoji-datasource/emoji_pretty.json";
+import emojiDatasource from "emoji-datasource/emoji_pretty.json" with { type: "json" };
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import Emoji, { EmojiDatasource, EmojiVariation } from "./emoji";
+import Emoji, { EmojiDatasource, EmojiVariation } from "./emoji.js";
 
 export default function EmojiGrid() {
   const defaultSelectedTab = 0;
