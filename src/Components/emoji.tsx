@@ -15,7 +15,6 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import twemoji from "@twemoji/api";
-import axios from "axios";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -133,7 +132,7 @@ export default function Emoji({
   };
 
   const handleSizeChanged = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ): void => {
     var newSize = parseInt(event.target.value);
 
@@ -181,18 +180,16 @@ export default function Emoji({
 
     setModalState({ ...modalState, isLoading: true });
 
-    var response = await axios.get(requestUrl, {
-      responseType: "blob",
-    });
+    var response = await (await fetch(requestUrl)).blob();
 
     setModalState({ ...modalState, isLoading: false });
 
-    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const url = window.URL.createObjectURL(new Blob([response]));
     const link = document.createElement("a");
     link.href = url;
     link.setAttribute(
       "download",
-      `${emoji.short_name}.${modalState.imageFormat}`
+      `${emoji.short_name}.${modalState.imageFormat}`,
     );
     document.body.appendChild(link);
     link.click();
@@ -231,21 +228,28 @@ export default function Emoji({
           alt={emoji.short_name}
         />
       </ImageListItem>
-
       {/* Modal */}
       <Modal open={modalState.isOpen} onClose={closeModal}>
         <Box sx={modalStyle}>
           <Grid container>
             {/* Close Icon */}
             <Grid container size={12} sx={{ pb: 1 }}>
-              <Grid size={10} sx={{ pl: 1 }} alignSelf="center">
+              <Grid
+                size={10}
+                sx={{
+                  alignSelf: "center",
+                  pl: 1,
+                }}
+              >
                 <Typography>{getFormattedName(emoji.name)}</Typography>
               </Grid>
               <Grid
                 container
                 size={2}
-                justifyContent="flex-end"
-                alignSelf="center"
+                sx={{
+                  justifyContent: "flex-end",
+                  alignSelf: "center",
+                }}
               >
                 <IconButton onClick={closeModal}>
                   <CloseIcon />
@@ -344,7 +348,13 @@ export default function Emoji({
               </Grid>
 
               {/* Download Button */}
-              <Grid container size={2} justifyContent="flex-end">
+              <Grid
+                container
+                size={2}
+                sx={{
+                  justifyContent: "flex-end",
+                }}
+              >
                 <IconButton
                   color="primary"
                   onClick={handleDownloadClick}

@@ -94,7 +94,7 @@ export default function EmojiGrid() {
                   if (variation) {
                     emojiVariations.push(variation);
                   }
-                }
+                },
               );
             }
 
