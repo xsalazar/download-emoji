@@ -16,7 +16,7 @@
     "@primer/octicons-react": "~19.31.0",
     "@twemoji/api": "~17.0.3",
     "@types/react": "~19.2.18",
-    "@types/react-dom": "~19.2.3",
+    "@types/react-dom": "~19.2.4",
     "@vitejs/plugin-react": "~6.0.5",
     "emoji-datasource": "~16.0.0",
     "react": "~19.2.5",
